@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Portal MM/ART</title>
+
+<style>
+
+html {
+	background-color: black;
+}
+
+#container {
+	width: 960px;
+	height: 600px;
+	margin: 0px auto;
+	text-align: left;
+	padding: 15px;
+	background-image: url("resources/tv.png");
+}
+
+#link {
+	position: absolute;
+	top: 200px;
+	width: 960px;
+	height: 2600px;
+	margin: 0px auto;
+	text-align: left;
+	padding: 15px;
+	background-color: red;
+
+}
+
+#slider1 {
+	 position: relative;
+	 width: 500px;
+	 height: 300px;
+	 margin: 0px auto;
+	 text-align: left;
+	 padding: 15px;
+	 background-color: none;
+	 top: 200px;
+	 left: 100px;
+}
+
+#test {
+	 position: relative;
+	 width:50px;
+	 height: 300px;
+	 margin: 0px auto;
+	 text-align: left;
+	 padding: 15px;
+	 background-color: red;
+	 top: 200px;
+	 left: 100px;
+}
+
+#ruis {
+	 position: absolute;
+	 width: 100px;
+	 height: 50px;
+	 margin: 0px auto;
+	 text-align: left;
+	 padding: 15px;
+	 background-color: none;
+	 top: -89px;
+	 left: 122px ;
+}
+
+#echteruis {
+	 position: absolute;
+	 width: 10px;
+	 height: 10px;
+	 margin: 0px auto;
+	 text-align: left;
+	 padding: 15px;
+	 background-color: red;
+	 top: -70px;
+	 left: 150px ;
+	 background-image: url("resources/static.gif");
+	 opacity: 0.4;
+}
+
+#slider1 .viewport {
+	top:-72px;
+	left: 153px;
+	float: left;
+	width: 50px;
+	height: 50px;
+	overflow: hidden;
+	position: absolute;
+}
+
+#door {
+	position: relative;
+	float: left;
+	width: 80px;
+	height: 156px;
+	top: -27px;
+	left: 108px;
+	z-index: 40;
+}
+
+#slider1 .buttons {
+	background: url("images/buttons1.png") no-repeat scroll 0 0 transparent;
+	display: block;
+	margin: 30px 10px 0 32px; // verplaats linker pijl // hoogte // ? // ? // links
+	top: 150px;
+	background-position: 0 0px;
+	text-indent: -999em;
+	float: left;
+	width: 100px;
+	height: 100px;
+	overflow: hidden;
+	position: absolute;
+}
+
+#slider1 .next {
+	background-position: 0 0;
+	margin: 30px 0 0 200px;
+}  // verplaats rechterpijl // hoogte // ? // ? // links
+
+#slider1 .disable {
+	visibility: hidden;
+}
+
+#slider1 .overview {
+	list-style: none;
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	width: 30px;
+	left: 50px;
+	top: 10px;
+}
+
+#slider1 .overview li {
+	top: -400px;
+	float: left;
+	margin: 0 0px 0 0;
+	padding: 1px;
+	height: 50px;
+	width: 50px;
+}
+
+#slider1 .buttons:hover {
+   background-image:url('resources/leftglow.png') ;
+   width:80px;
+}
+
+#slider1 .next:hover {
+   background-image:url('resources/rightglow.png') ;
+   width:80px;
+}
+</style>
+
+<script src="../resources/jquery-1.9.1.min.js"></script>
+<script src="../resources/tinycarousel_loop.js"></script>
+
+<script>
+$(document).ready(function() {
+
+	$('body').hide().fadeIn(6000);
+
+	$('#slider1').tinycarousel({loop: true});
+
+	$("li").hover(function () {
+    	$(this).append($("<span> ***</span>"));
+  	}, function () {
+    	$(this).find("span:last").remove();
+  	});
+
+	$("li.fade").hover(function(){
+		$(this).fadeOut(100);
+		$(this).fadeIn(500);
+	});
+
+	// DETERMINING WHICH PAGE TO VISIT
+
+	var index = 1;
+	$("#left").click(function() {
+		if (index === 1) {
+			index = 4;
+		} else {
+			index -= 1;
+		}
+	});
+
+	$("#right").click(function() {
+		if (index === 4) {
+			index = 1;
+		} else {
+			index += 1;
+		}
+	});
+
+	$("#door").click(function() {
+		$("#urban").animate({volume: 0}, 3000);
+		$("#opendoor")[0].play();
+		$('body').fadeOut(3000, function() {
+      		if (index === 1) {
+				window.location = "../Literature/literature.html";
+			} else if (index === 2) {
+				window.location = "../Film/film.html";
+			} else if (index === 3) {
+				window.location = "../Music/music.html";
+			} else {
+				window.location = "../Photography/photography.html";
+			}
+  		});
+	});
+
+	// LOOPING THE AMBIENCE (the html5 'loop' attribute malfunctioned, so this is an easy fix)
+
+	$("#urban").bind('ended', function() {
+		this.load();
+		this.play();
+	});
+
+
+
+});
+
+</script>
+
+</head>
+<body>
+
+<div id="container">
+	<div id="slider1">
+		<div id="door"></div>
+
+		<a class="buttons prev disable" href="#" id="left">left</a>
+
+		<div class="viewport">
+			<ul class="overview" style="width: 60px; left: 0px;">
+				<li><img src="resources/lit.png"></li>
+				<li><img src="resources/movie.png"></li>
+				<li><img src="resources/mus.png"></li>
+				<li><img src="resources/photoicon.png"></li>
+			</ul>
+		</div>
+
+		<div id='echteruis'> </div>
+		<div id='ruis'><img src="resources/ruis.png"></div>
+
+		<a class="buttons next" href="#" id="right">right</a>
+	</div>
+</div>
+
+<audio id="urban" autoplay><source src="resources/urban.mp3" type="audio/mpeg"></audio>
+<audio id="opendoor"><source src="resources/opendoor.mp3" type="audio/mpeg"></audio>
+
+</body>
+
+</html>

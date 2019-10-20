@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Intro MM/ART</title>
+
+<style>
+html {
+	background-color: black;
+	overflow: hidden;
+}
+
+.stretch {
+	width: 100%;
+	height: 100%;
+}
+</style>
+
+<script src="../resources/jquery-1.9.1.min.js"></script>
+<script>
+
+$(document).ready(function () {
+
+	$('body').hide().fadeIn(6000);
+
+	document.getElementById("intro").volume=0.3;
+
+	$("#intro").bind("ended", function() {
+		window.location = "../Portal/portal.html";
+	});
+});
+
+</script>
+
+</head>
+
+<body>
+<div><video class="stretch" id="intro" autoplay><source src="resources/intro.ogg" type="video/mp4"></video></div>
+</body>
+
+</html>

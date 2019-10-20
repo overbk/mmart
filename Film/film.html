@@ -1,0 +1,195 @@
+<html>
+<title>Film MM/ART</title>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Maven+Pro:700' rel='stylesheet' type='text/css'>
+
+<style>
+
+html {
+	overflow: hidden;
+	background-color: black;
+}
+
+video {
+   	position: absolute;
+   	top: 80px;
+   	opacity: 0;  /* all videos fade in using jQuery */
+}
+
+#cinema-bg {
+	margin-left: 40px;
+}
+
+#door {
+	position: fixed;
+	left: 1131px;
+	top: 440px;
+	width: 70px;
+	height: 135px;
+}
+
+#roominfo {
+	width: 800px;
+	left: 245px;
+	position: absolute;
+	text-align: center;
+	color: white;
+	font-family: 'Maven Pro', sans-serif;
+	opacity: 0.2;
+	font-size: 25px;
+}
+
+#zzz {
+	position: fixed;
+	left: 1100px;
+	top: 100px;
+	opacity: 0.4;
+}
+
+#zzz:hover {
+	opacity: 1;
+}
+
+#door {
+	width: 80px;
+	height: 120px;
+	left: 90px;
+	top: 450px;
+	z-index: 50;
+}
+
+/* specific film scenes */
+
+#faust {
+	margin-left: 425px;
+    height: 318px;
+}
+
+#hamlet {
+	margin-left: 250px;
+	height: 324px;
+}
+
+</style>
+
+<script src="../resources/jquery-1.9.1.min.js"></script>
+<script src="../resources/jquery.zoomooz.min.js"></script>
+<script>
+
+$(document).ready(function () {
+
+	$('body').hide().fadeIn(6000);
+
+	document.getElementById("snore").volume=0.4;
+
+	$("#crowdmurmurs")[0].play();
+
+	function setVideoListeners() {
+		$("video").bind('loadeddata', function() {
+	  		$(this).fadeTo(4000, 1);
+	  		$("#crowdmurmurs").animate({volume: 0}, 6000);
+		});
+
+		$("video").bind('ended', function() {
+  			$(this).fadeOut(4000);
+ 		});
+ 	}
+
+	var SCREEN = "#screen";
+
+	var HAMLET = "hamlet";
+	var FAUST = "faust";
+
+	var url = {};
+
+	url[HAMLET] = "resources/Kozintsev%20-%20Hamlet%20%281964%29.ogg";
+	url[FAUST] = "resources/FW%20Murnau%20-%20Faust%20%281926%29.ogg";
+
+	var info = {}; // format: DIRECTOR - TITLE (YEAR)
+
+	info[HAMLET] = "GRIGORI KOZINTSEV - HAMLET (1964)";
+	info[FAUST] = "F.W. MURNAU - FAUST (1926)";
+
+   	var cycle = new Array();
+
+   	cycle[0] = HAMLET;
+   	cycle[1] = FAUST;
+
+	var VID1 = "<video id=\"";
+	var VID2 = "\" src=\"";
+	var VID3 = "\" autoplay></video>";
+
+	function video(videoID) {
+		return VID1 + videoID + VID2 + url[videoID] + VID3;
+	}
+
+	var index = 0;
+
+	function roominfo(videoID) {
+		return "NOW PLAYING: "+ info[videoID];
+	}
+
+	$(SCREEN).append(video(cycle[index]));
+	$("#roominfo").append(roominfo(cycle[index]));
+
+	setVideoListeners();
+
+	$("#zzz").click(function() {
+		$("#crowdmurmurs").animate({volume: 0}, 3000);
+		$("video").animate({volume: 0}, 3000);
+
+		if (index < cycle.length - 1) {
+			index += 1;
+		} else {
+			index = 0;
+		}
+
+		$("#zzz").zoomTo({targetsize: 1, duration: 7000});
+
+		$("#snore").load();
+		$("#snore")[0].play();
+
+		$("body").fadeOut(6000, function() {
+			$(SCREEN).empty();
+			$("#roominfo").html(roominfo(cycle[index]));
+			$("body").zoomTo({duration: 0});
+
+			$("body").fadeIn(6000, function() {
+				$("#crowdmurmurs").remove();
+				$("body").append("<audio id='crowdmurmurs'><source src='resources/crowdmurmurs.mp3'></audio>");
+				$("#crowdmurmurs")[0].play();
+				$(SCREEN).append(video(cycle[index]));
+				setVideoListeners();
+			});
+		});
+
+	});
+
+	$("#door").click(function() {
+		$("#opendoor")[0].play();
+		$('body').fadeOut(3000, function() {
+      		window.location = "../Portal/portal.html";
+  		});
+	 });
+
+});
+
+</script>
+</head>
+
+<body>
+
+<audio id="opendoor"><source src="resources/opendoor.mp3"></audio>
+<audio id="crowdmurmurs"><source src="resources/crowdmurmurs.mp3"></audio>
+<audio id="snore"><source src="resources/snore.mp3"></audio>
+<audio id="opendoor"><source src="resources/opendoor.mp3"></audio>
+
+<p id="roominfo"></p>
+
+<div id="screen"></div>
+<div id="cinema-bg"><img src="resources/cinema.png"/></div>
+<div id="zzz"><img src="resources/zzz.png"/></div>
+<div id="door"></div>
+
+</body>
+</html>

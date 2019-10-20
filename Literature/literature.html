@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css'>
+<title>Literature MM/ART</title>
+
+<style type="text/css">
+
+	html {
+		overflow: hidden;
+		background-color: black;
+	}
+
+	/* BACKGROUND */
+
+	#background {
+		width: 100%;
+    	height: 100%;
+    	position: fixed;
+    	left: 0px;
+    	top: 0px;
+    	z-index: -100;
+	}
+
+	.stretch {
+    	width: 100%;
+    	height: 100%;
+	}
+
+	/* TEXT BOX */
+
+	#container {
+    	position: fixed;
+		width: 30%;
+		height: 60%;
+    	left: 140px;
+    	top: 80px;
+    	-webkit-perspective: 500;
+    	-webkit-perspective-origin: 50% 50%;
+    }
+
+    #container > div {
+    	position: fixed;
+    	width: 100%;
+    	height: 100%;
+    	top: 40px;
+    	left: 40px;
+    	padding: 25px;
+
+    	-webkit-transform: rotateY(40deg);
+
+		-webkit-animation: introAnimation 12s linear;
+		-webkit-animation-iteration-count: 1;
+		-webkit-animation-fill-mode: forwards;
+		-webkit-transform-style: preserve-3d;
+	}
+
+	#text {
+    	color: yellow;
+    	text-shadow: 2px 2px black;
+    	font-family: 'Noto Serif', serif;
+    	z-index: 2;
+    	font-size: 85%;
+
+
+    	overflow-y: scroll;
+    	overflow-x: hidden;
+	}
+
+	#keyboard {
+		width: 90%;
+	}
+
+    #noisebg {
+    	background-image: url("resources/noise.gif");
+    	opacity: 0.2;
+ 		z-index: 1;
+    }
+
+    #containerbg {
+    	background-color: #003416;
+    	opacity: 0.7;
+    	z-index: 0;
+    }
+
+    @-webkit-keyframes introAnimation {
+		0% {
+			-webkit-transform:	rotateY(40deg)
+								translateX(500px)
+								translateZ(200px)
+								translateY(-1000px);
+		}
+
+		25% {
+			-webkit-transform:	rotateY(40deg)
+								translateX(200px)
+								translateZ(400px)
+								translateY(400px);
+		}
+
+		75% {-webkit-transform:	rotateY(360deg)
+								translateX(50px)
+								translateZ(200px)
+								translateY(-100px);
+		}
+
+		90% {-webkit-transform: rotateY(400deg)
+								translateX(0px)
+								translateZ(0px)
+								translateY(150px);
+		}
+
+		100% {-webkit-transform: rotateY(400deg)
+								translateX(0px)
+								translateZ(0px)
+								translateY(0px);
+		}
+
+	}
+
+    ::-webkit-scrollbar {
+    	width: 12px;
+	}
+
+	::-webkit-scrollbar-track {
+		background-color: black;
+	}
+
+	::-webkit-scrollbar-thumb {
+    	background-color: yellow;
+	}
+
+    /* BLINKING GIFS */
+
+   .blink {
+    	width: 20px;
+    	height: 20px;
+    	opacity: 0.8;
+    }
+
+    #book1 {
+    	top: 30%;
+    	left: 75%;
+    	position: fixed;
+	}
+
+	 #book2 {
+    	top: 25%;
+    	left: 85%;
+    	position: fixed;
+	}
+
+	#book3 {
+		top: 21%;
+    	left: 77%;
+    	position: fixed;
+	}
+
+	#book4 {
+		top: 24%;
+    	left: 70%;
+    	position: fixed;
+	}
+
+	/* AUDIO TOGGLING */
+
+	#toggleAudio {
+		z-index: 5;
+		position: fixed;
+	}
+
+	#muted {
+		display: none;
+		position: absolute;
+	}
+
+	#unmuted {
+		position: absolute;
+	}
+
+	/* AUTHOR CUTOUTS */
+
+	.authorcontainer {
+		position: fixed;
+		right: -500px;
+		bottom: -10px;
+	}
+
+	.authorimg {
+		width: 70%;
+		height: 70%;
+	}
+
+	/* DOOR */
+
+	#door {
+		position: fixed;
+		top: 53%;
+		left: 47%;
+		width: 4%;
+		height: 9%;
+		z-index: 5;
+	}
+
+</style>
+
+<script type="text/javascript" src="../resources/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+
+	// DYNAMIC TEXTBOX
+
+    function setPerspectiveOrigin (event) {
+      var container = document.getElementById('container');
+
+      var offsetX = event.pageX - container.offsetLeft;
+      var offsetY = event.pageY - container.offsetTop;
+
+      var originStyle = (100 * offsetX / container.offsetWidth) + '% ' + (100 * offsetY / container.offsetHeight) + '%';
+      container.style.webkitPerspectiveOrigin = originStyle;
+    }
+
+    window.addEventListener('load', function() {
+      window.addEventListener('mousemove', setPerspectiveOrigin, false);
+    }, false);
+
+    // --- JQUERY ---
+
+    $(document).ready(function () {
+
+	$('body').hide().fadeIn(12000);
+
+    // TYPEWRITER
+
+    var content = "Well done. Do not forget what you have just learned. <br><br> Once you have finished exploring, you may return to the portal through the designated exit. ";
+
+	$(document).keypress(function() {
+		$("#text").append(content.substr(0, content.indexOf(' ')) + ' ');
+		content = content.substr(content.indexOf(' ') + 1);
+
+		var objDiv = document.getElementById("text");
+		objDiv.scrollTop = objDiv.scrollHeight;
+	});
+
+	// SWITCHING BOOKS
+
+	var bookOpen = 0;
+	var authorId = "";
+
+	$("#book1").click(function() {
+		if (bookOpen != 1) {
+			if (authorId != "") {
+  				$(authorId).animate({"right": "-=400px"}, "slow");
+  			}
+
+  			$("#pageflip").load();
+			$("#pageflip")[0].play();
+
+  			$("#cioran").animate({"right": "+=400px"}, "slow");
+  			bookOpen = 1;
+  			authorId = "#cioran";
+
+  			$("#text").html("");
+
+ 			content = "<strong>Epitaph</strong><br> <br>'He had the pride never to command or to prescribe anything, anyone. Without " +
+ 					  "subalterns, without masters, he neither gave nor received orders. Excluded from the empire of laws and somehow " +
+ 					  "anterior to good and evil, he never made a living soul suffer. The names of things faded from his memory; " +
+ 					  "he looked without seeing, listened without hearing; scents and savors vanished at the approach of his nostrils, his " +
+ 					  "palate. His senses and his desires were his only slaves: hence they felt, desired nothing. He forgot happiness " +
+ 					  "and misery, thirst and fear; and if he happened to recall them, he scorned to name them and thereby to sink to hope " +
+ 					  "and regret. The merest gesture cost him more efforts than it would cost others to establish or overthrow a kingdom. " +
+ 					  "Born weary of being born, he chose to be a shade; when, then, did he live, and by the transgression of what birth? " +
+ 					  "And if, living, he wore his shroud, by what miracle did he manage to die?'<br> <br>" +
+ 					  "Emil Cioran - <em>A</em> <em>Short</em> <em>History</em> <em>of</em> <em>Decay</em> (1949) ";
+  		}
+	});
+
+	$("#book2").click(function() {
+		if (bookOpen != 2) {
+			if (authorId != "") {
+  				$(authorId).animate({"right": "-=400px"}, "slow");
+  			}
+
+  			$("#pageflip").load();
+			$("#pageflip")[0].play();
+
+  			$("#spengler").animate({"right": "+=400px"}, "slow");
+  			bookOpen = 2;
+  			authorId = "#spengler";
+
+  			$("#text").html("");
+
+ 			content = "We know it to be true of every organism that the rhythm, form and duration of its life, and all the expression-details of that life as well, are determined by the properties of its species. No one, looking at the oak, with its millennial life, dare say that it is at this moment, now, about to start on its true and proper course. No one as he sees a caterpillar grow day by day expects that it will go on doing so for two or three years. In these cases we feel, with an unqualified certainty, a limit and this sense of the limit is identical with our sense of the inward form. In the case of higher human history, on the contrary, we take our ideas as to the course of the future from an unbridled optimism that sets at naught all historical, i.e., organic, experience, and everyone therefore sets himself to discover in the accidental present terms that he can expand into some striking progression-series, the existence of which rests not on scientific proof but on predilection. He works upon unlimited possibilities - never a natural end - and from the momentary top-course of his bricks plans artlessly the continuation of his structure.<br> <br> " +
+						"\"Mankind,\" however, has no aim, no idea, no plan, any more than the family of butterflies or orchids. \"Mankind\" is a zoological expression, or an empty word. But conjure away the phantom, break the magic circle, and at once there emerges an astonishing wealth of actual forms - the Living with all its immense fullness, depth and movement - hitherto veiled by a catchword, a dryasdust scheme, and a set of personal \"ideals.\" I see, in place of that empty figment of one linear history which can only be kept up by shutting one's eyes to the overwhelming multitude of the facts, the drama of a number of mighty Cultures, each springing with primitive strength from the soil of a motherregion to which it remains firmly bound throughout its whole life-cycle; each stamping its material, its mankind, in its own image; each having its own idea, its own passions, its own life, will and feeling, its own death. Here indeed are colours, lights, movements, that no intellectual eye has yet discovered. Here the Cultures, peoples, languages, truths, gods, landscapes bloom and age as the oaks and the stone-pines, the blossoms, twigs and leaves - but there is no ageing \"Mankind.\" Each Culture has its own new possibilities of self-expression which arise, ripen, decay, and never return. There is not one sculpture, one painting, one mathematics, one physics, but many, each in its deepest essence different from the others, each limited in duration and self-contained, just as each species of plant has its peculiar blossom or fruit, its special type of growth and decline. These cultures, sublimated life-essences, grow with the same superb aimlessness as the flowers of the field. They belong, like the plants and the animals, to the living Nature of Goethe, and not to the dead Nature of Newton. I see world-history as a picture of endless formations and transformations, of the marvellous waxing and waning of organic forms. The professional historian, on the contrary, sees it as a sort of tapeworm industriously adding on to itself one epoch after another.<br> <br> " +
+						"Oswald Spengler - <em>The</em> <em>Decline</em> <em>of</em> <em>the</em> <em>West,</em> <em>Volume</em> <em>I</em> (1918) ";
+  		}
+	});
+
+	$("#book3").click(function() {
+		if (bookOpen != 3) {
+			if (authorId != "") {
+  				$(authorId).animate({"right": "-=400px"}, "slow");
+  			}
+
+  			$("#pageflip").load();
+			$("#pageflip")[0].play();
+
+  			$("#laotse").animate({"right": "+=400px"}, "slow");
+  			bookOpen = 3;
+  			authorId = "#laotse";
+
+  			$("#text").html("");
+
+ 			content = "<strong>9</strong><br><br> "+
+			 			"Rather than fill it to the brim by keeping it upright<br> " +
+						"Better to have stopped in time;<br> " +
+						"Hammer it to a point<br> " +
+						"And the sharpness cannot be preserved for ever;<br> " +
+						"There may be gold and jade to fill a hall<br> " +
+						"But there is none who can keep them. <br> " +
+						"To be overbearing when one has wealth and position <br> "+
+						"Is to bring calamity upon oneself.<br> "+
+						"To retire when the task is accomplished<br> " +
+						"Is the way of heaven.<br><br> " +
+						"Lao-Tse - <em>Daodedjing</em> (6th century BC) ";
+  		}
+	});
+
+	$("#book4").click(function() {
+		if (bookOpen != 4) {
+			if (authorId != "") {
+  				$(authorId).animate({"right": "-=400px"}, "slow");
+  			}
+
+			$("#pageflip").load();
+			$("#pageflip")[0].play();
+
+  			$("#schopenhauer").animate({"right": "+=400px"}, "slow");
+  			bookOpen = 4;
+  			authorId = "#schopenhauer";
+
+  			$("#text").html("");
+
+ 			content = "Music, therefore, if regarded as an expression of the world, is in the highest degree a universal language, which is related indeed to the universality of concepts, much as they are related to the particular things. Its universality, however, is by no means that empty universality of abstraction, but quite of a different kind, and is united with thorough and distinct definiteness. In this respect it resembles geometrical figures and numbers, which are the universal forms of all possible objects of experience and applicable to them all <em>a</em> <em>priori</em>, and yet are not abstract but perceptible and thoroughly determined. All possible efforts, excitements, and manifestations of will, all that goes on in the heart of man and that reason includes in the wide, negative concept of feeling, may be expressed by the infinite number of possible melodies, but always in the universal, in the mere form, without the material, always according to the thing-in-itself, not the phenomenon, the inmost soul, as it were, of the phenomenon, without the body. This deep relation which music has to the true nature of all things also explains the fact that suitable music played to any scene, action, event, or surrounding seems to disclose to us its most secret meaning, and appears as the most accurate and distinct commentary upon it. This is so truly the case, that whoever gives himself up entirely to the impression of a symphony, seems to see all the possible events of life and the world take place in himself, yet if he reflects, he can find no likeness between the music and the things that passed before his mind. For, as we have said, music is distinguished from all the other arts by the fact that it is not a copy of the phenomenon, or, more accurately, the adequate objectivity of will, but is the direct copy of the will itself, and therefore exhibits itself as the metaphysical to everything physical in the world, and as the thing-in-itself to every phenomenon. We might, therefore, just as well call the world embodied music as embodied will; and this is the reason why music makes every picture, and indeed every scene of real life and of the world, at once appear with higher significance, certainly all the more in proportion as its melody is analogous to the inner spirit of the given phenomenon. It rests upon this that we are able to set a poem to music as a song, or a perceptible representation as a pantomime, or both as an opera. Such particular pictures of human life, set to the universal language of music, are never bound to it or correspond to it with stringent necessity; but they stand to it only in the relation of an example chosen at will to a general concept. In the determinateness of the real, they represent that which music expresses in the universality of mere form. For melodies are to a certain extent, like general concepts, an abstraction from the actual. This actual world, then, the world of particular things, affords the object of perception, the special and individual, the particular case, both to the universality of the concepts and to the universality of the melodies. But these two universalities are in a certain respect opposed to each other; for the concepts contain particulars only as the first forms abstracted from perception, as it were, the separated shell of things; thus they are, strictly speaking, <em>abstracta</em>; music, on the other hand, gives the inmost kernel which precedes all forms, or the heart of things.<br> <br> "+
+ 			          "Arthur Schopenhauer - <em>The</em> <em>World</em> <em>as</em> <em>Will</em> <em>and</em> <em>Representation</em>, <em>Volume</em> <em>I</em> (1818) ";
+  		}
+	});
+
+	// TOGGLING AUDIO
+
+	var muted = false;
+
+	$("#toggleAudio").click(function() {
+		if (!muted) {
+			$("#unmuted").css("display", "none");
+			$("#muted").css("display", "inline");
+			muted = true;
+			document.getElementById("bgmusic").muted = true;
+			document.getElementById("pageflip").muted = true;
+			document.getElementById("opendoor").muted = true;
+		} else {
+			$("#muted").css("display", "none");
+			$("#unmuted").css("display", "inline");
+			muted = false;
+			document.getElementById("bgmusic").muted = false;
+			document.getElementById("pageflip").muted = false;
+			document.getElementById("opendoor").muted = false;
+		}
+	});
+
+	// RETURNING TO PORTAL (EXIT)
+
+	$("#door").click(function() {
+		$("#bgmusic").animate({volume: 0}, 3000);
+		$("#opendoor")[0].play();
+		$('body').fadeOut(3000, function() {
+      		window.location = "../Portal/portal.html";
+  		});
+	});
+
+	// LOOPING THE BACKGROUND MUSIC (the html5 'loop' attribute malfunctioned, so this is an easy fix)
+
+	$("#bgmusic").bind('ended', function() {
+		this.load();
+		this.play();
+	});
+
+});
+
+</script>
+</head>
+
+<body>
+<!-- AUDIO FILES AND TOGGLING -->
+
+<audio id="bgmusic" autoplay><source src="resources/caretaker.mp3" type="audio/mpeg"></audio>
+<audio id="pageflip"><source src="resources/pageflip.mp3" type="audio/mpeg"></audio>
+<audio id="opendoor"><source src="resources/opendoor.mp3" type="audio/mpeg"></audio>
+
+<div id="toggleAudio">
+	<img src="resources/unmuted.png" alt="unmuted" id="unmuted">
+	<img src="resources/muted.png" alt="muted" id="muted">
+</div>
+
+<!-- TEXT BOX -->
+
+<div id="container">
+    <div id="text">Try pressing some keys, stranger.<br><br><img src="resources/keyboard.png" id="keyboard" alt="keyboard"><br><br> </div>
+	<div id="noisebg"></div>
+	<div id="containerbg"></div>
+</div>
+
+<!-- BLINKING GIFS -->
+
+<div id="book1">
+<img src="resources/blink1.gif" class="blink" alt="book1">
+</div>
+
+<div id="book2">
+<img src="resources/blink1.gif" class="blink" alt="book2">
+</div>
+
+<div id="book3">
+<img src="resources/blink1.gif" class="blink" alt="book3">
+</div>
+
+<div id="book4">
+<img src="resources/blink1.gif" class="blink" alt="book4">
+</div>
+
+<!-- AUTHOR CUTOUTS -->
+
+<div id="cioran" class="authorcontainer">
+<img src="resources/cioran.png" id="cioranimg" class="authorimg" alt="cioran">
+</div>
+
+<div id="spengler" class="authorcontainer">
+<img src="resources/spengler.png" id="spenglerimg" class="authorimg" alt="spengler">
+</div>
+
+<div id="laotse" class="authorcontainer">
+<img src="resources/laotse.png" id="laotseimg" class="authorimg" alt="laotse">
+</div>
+
+<div id="schopenhauer" class="authorcontainer">
+<img src="resources/schopenhauer.png" id="schopenhauerimg" class="authorimg" alt="schopenhauer">
+</div>
+
+<!-- DOOR -->
+
+<div id="door"></div>
+
+<!-- LIBRARY BACKGROUND -->
+
+<div id="background">
+<img src="resources/libraryedit.jpg" class="stretch" alt="background image">
+</div>
+
+</body>
+</html>
